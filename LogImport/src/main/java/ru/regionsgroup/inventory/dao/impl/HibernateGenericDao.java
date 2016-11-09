@@ -3,12 +3,14 @@ package ru.regionsgroup.inventory.dao.impl;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ru.regionsgroup.inventory.dao.GenericDao;
 import ru.regionsgroup.inventory.service.utils.HibernateUtil;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Transactional
 public class HibernateGenericDao<T, K extends Serializable> implements GenericDao<T, K> {
     private SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
     private Class<T> entityType;
