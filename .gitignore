@@ -1,0 +1,14 @@
+.idea/
+build/
+classes/*
+.gradle/
+out/
+lib/
+.idea/
+untitled/
+*.jar
+*.war
+*.ear
+*.class
+*.idea
+*.iml
