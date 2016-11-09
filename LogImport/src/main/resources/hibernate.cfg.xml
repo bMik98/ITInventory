@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!--nibernate-->
+        <property name="connection.url">jdbc:postgresql://localhost:5432/itinventory</property>
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">root</property>
+        <property name="hibernate.connection.characterEncoding">UTF-8</property>
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="current_session_context_class">thread</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.connection.autocommit">true</property>
+        <!--mapping-->
+        <mapping class="ru.regionsgroup.inventory.model.PrinterConnection"/>
+        <mapping class="ru.regionsgroup.inventory.model.Domain"/>
+        <mapping class="ru.regionsgroup.inventory.model.User"/>
+        <mapping class="ru.regionsgroup.inventory.model.Computer"/>
+        <!--<property name="default_schema">itinventory</property>-->
+    </session-factory>
+</hibernate-configuration>
