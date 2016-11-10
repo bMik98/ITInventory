@@ -60,4 +60,8 @@ public class HibernateGenericDao<T, K extends Serializable> implements GenericDa
         Query query = getSession().createQuery(String.format("from %s", entityType.getName()));
         return query.list();
     }
+
+    public Class<T> getEntityType() {
+        return entityType;
+    }
 }

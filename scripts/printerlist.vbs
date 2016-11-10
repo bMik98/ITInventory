@@ -1,8 +1,8 @@
 '=========================================================================='
 ' Title: printerlist.vbs' 
-' Date: 18/10/2016' 
+' Date: 10.11.2016' 
 ' Author: Mikhail Bedritskiy (bmik9898@gmail.com)' 
-' Version: 1.00' 
+' Version: 1.10' 
 ' Updated: ' 
 ' Purpose: List all printers attached to a workstation' 
 '=========================================================================='
@@ -39,8 +39,10 @@ End Function
 Function NewRecordDictionary(ByRef objAdSystemInfo)
     Dim dict: Set dict = CreateObject("Scripting.Dictionary")
     dict.CompareMode = 1
+    Dim strName : strName = Mid(objAdSystemInfo.ComputerName, 4, InStr(objAdSystemInfo.ComputerName, ",") - 4)
     dict.Add "ReportDate", DateFormat(Date)
-    dict.Add "ComputerName", Mid(objAdSystemInfo.ComputerName, 4, InStr(objAdSystemInfo.ComputerName, ",") - 4)
+    dict.Add "ComputerID", LCase(strName & "." & objAdSystemInfo.DomainDNSName)
+    dict.Add "ComputerName", strName
     dict.Add "ComputerDnsDomain", objAdSystemInfo.DomainDNSName
     dict.Add "ComputerDN", objAdSystemInfo.ComputerName
     dict.Add "Site", objAdSystemInfo.SiteName
