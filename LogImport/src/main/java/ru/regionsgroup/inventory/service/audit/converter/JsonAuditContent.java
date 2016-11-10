@@ -3,7 +3,7 @@ package ru.regionsgroup.inventory.service.audit.converter;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
-import ru.regionsgroup.inventory.service.audit.AuditContentConverter;
+import ru.regionsgroup.inventory.service.audit.AuditContent;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Mbedritskiy
  */
 @SuppressWarnings("unchecked")
-public class JsonAuditContentConverter<T> implements AuditContentConverter<T> {
+public class JsonAuditContent<T> implements AuditContent<T> {
     @Override
     public T decode(final String content) {
         Class<T> entityType = (Class<T>) ((ParameterizedType) this.getClass()

@@ -6,6 +6,6 @@ import java.util.List;
 /**
  * @author Mbedritskiy
  */
-public interface AuditDirectory {
+public interface AuditLocation {
     List<String> importContent();
 }

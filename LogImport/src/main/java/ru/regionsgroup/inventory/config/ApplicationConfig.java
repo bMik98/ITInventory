@@ -1,6 +1,5 @@
 package ru.regionsgroup.inventory.config;
 
-import org.hibernate.annotations.BatchSize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,15 +8,13 @@ import ru.regionsgroup.inventory.dao.impl.HibernateComputerDao;
 import ru.regionsgroup.inventory.dao.impl.HibernateDomainDao;
 import ru.regionsgroup.inventory.dao.impl.HibernatePrinterConnectionDao;
 import ru.regionsgroup.inventory.dao.impl.HibernateUserDao;
-import ru.regionsgroup.inventory.service.audit.AuditLoader;
-import ru.regionsgroup.inventory.service.audit.converter.ComputerAuditContentConverter;
-import ru.regionsgroup.inventory.service.audit.converter.DomainAuditContentConverter;
-import ru.regionsgroup.inventory.service.audit.converter.PrinterConnectionAuditContentConverter;
-import ru.regionsgroup.inventory.service.audit.converter.UserAuditContentConverter;
-import ru.regionsgroup.inventory.service.audit.directory.ComputerAuditDirectory;
-import ru.regionsgroup.inventory.service.audit.directory.DomainAuditDirectory;
-import ru.regionsgroup.inventory.service.audit.directory.PrinterConnectionAuditDirectory;
-import ru.regionsgroup.inventory.service.audit.directory.UserAuditDirectory;
+import ru.regionsgroup.inventory.service.audit.AuditImport;
+import ru.regionsgroup.inventory.service.audit.converter.*;
+import ru.regionsgroup.inventory.service.audit.converter.ComputerAuditContent;
+import ru.regionsgroup.inventory.service.audit.converter.DomainAuditContent;
+import ru.regionsgroup.inventory.service.audit.directory.*;
+import ru.regionsgroup.inventory.service.audit.directory.DomainAuditLocation;
+import ru.regionsgroup.inventory.service.audit.directory.UserAuditLocation;
 import ru.regionsgroup.inventory.service.audit.load.ComputerAuditLoader;
 import ru.regionsgroup.inventory.service.audit.load.DomainAuditLoader;
 import ru.regionsgroup.inventory.service.audit.load.PrinterConnectionAuditLoader;
@@ -44,43 +41,43 @@ public class ApplicationConfig {
     private HibernatePrinterConnectionDao printerConnectionDao;
 
     @Bean
-    UserAuditDirectory userAuditDirectory() {
-        return new UserAuditDirectory(Paths.get(AD_ROOT), USER_LOG);
+    UserAuditLocation userAuditDirectory() {
+        return new UserAuditLocation(Paths.get(AD_ROOT), USER_LOG);
     }
 
     @Bean
-    ComputerAuditDirectory computerAuditDirectory() {
-        return new ComputerAuditDirectory(Paths.get(AD_ROOT), COMP_LOG);
+    ComputerAuditLocation computerAuditDirectory() {
+        return new ComputerAuditLocation(Paths.get(AD_ROOT), COMP_LOG);
     }
 
     @Bean
-    DomainAuditDirectory domainAuditDirectory() {
-        return new DomainAuditDirectory(Paths.get(AD_ROOT), DOMAIN_LOG);
+    DomainAuditLocation domainAuditDirectory() {
+        return new DomainAuditLocation(Paths.get(AD_ROOT), DOMAIN_LOG);
     }
 
     @Bean
-    PrinterConnectionAuditDirectory printerConnectionAuditDirectory() {
-        return new PrinterConnectionAuditDirectory(Paths.get(PRN_ROOT), LOG_FILTER);
+    PrinterConnectionAuditLocation printerConnectionAuditDirectory() {
+        return new PrinterConnectionAuditLocation(Paths.get(PRN_ROOT), LOG_FILTER);
     }
 
     @Bean
-    UserAuditContentConverter userAuditContentConverter() {
-        return new UserAuditContentConverter();
+    UserAuditContent userAuditContentConverter() {
+        return new UserAuditContent();
     }
 
     @Bean
-    ComputerAuditContentConverter computerAuditContentConverter() {
-        return new ComputerAuditContentConverter();
+    ComputerAuditContent computerAuditContentConverter() {
+        return new ComputerAuditContent();
     }
 
     @Bean
-    DomainAuditContentConverter domainAuditContentConverter() {
-        return new DomainAuditContentConverter();
+    DomainAuditContent domainAuditContentConverter() {
+        return new DomainAuditContent();
     }
 
     @Bean
-    PrinterConnectionAuditContentConverter printerConnectionAuditContentConverter() {
-        return new PrinterConnectionAuditContentConverter();
+    PrinterConnectionAuditContent printerConnectionAuditContentConverter() {
+        return new PrinterConnectionAuditContent();
     }
 
     @Bean
@@ -102,6 +99,16 @@ public class ApplicationConfig {
     PrinterConnectionAuditLoader printerConnectionAuditLoader() {
         return new PrinterConnectionAuditLoader(
                 printerConnectionDao, printerConnectionAuditContentConverter(), printerConnectionAuditDirectory());
+    }
+
+    @Bean
+    AuditImport auditImport() {
+        AuditImport batch = new AuditImport();
+        batch.addLoader(domainAuditLoader());
+        batch.addLoader(userAuditLoader());
+        batch.addLoader(computerAuditLoader());
+        batch.addLoader(printerConnectionAuditLoader());
+        return batch;
     }
 
     @Autowired

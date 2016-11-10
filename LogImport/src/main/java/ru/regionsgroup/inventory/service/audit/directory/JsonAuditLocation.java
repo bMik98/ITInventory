@@ -1,6 +1,6 @@
 package ru.regionsgroup.inventory.service.audit.directory;
 
-import ru.regionsgroup.inventory.service.audit.AuditDirectory;
+import ru.regionsgroup.inventory.service.audit.AuditLocation;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -13,17 +13,17 @@ import java.util.List;
 /**
  * @author Mbedritskiy
  */
-public class JsonAuditDirectory implements AuditDirectory {
+public class JsonAuditLocation implements AuditLocation {
     private static final int MIN_FILE_SIZE = 20;
 
     private Path directoryPath;
     private String filter;
     private Charset charset = Charset.forName("UTF-16LE");
 
-    public JsonAuditDirectory() {
+    public JsonAuditLocation() {
     }
 
-    public JsonAuditDirectory(Path directoryPath, String filter) {
+    public JsonAuditLocation(Path directoryPath, String filter) {
         this.directoryPath = directoryPath;
         this.filter = filter;
     }

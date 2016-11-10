@@ -1,7 +1,7 @@
 package ru.regionsgroup.inventory.service.audit.load;
 
-import ru.regionsgroup.inventory.service.audit.AuditContentConverter;
-import ru.regionsgroup.inventory.service.audit.AuditDirectory;
+import ru.regionsgroup.inventory.service.audit.AuditContent;
+import ru.regionsgroup.inventory.service.audit.AuditLocation;
 import ru.regionsgroup.inventory.dao.GenericDao;
 import ru.regionsgroup.inventory.service.audit.AuditLoader;
 
@@ -12,12 +12,12 @@ import java.util.List;
  */
 public class AuditLoaderImpl implements AuditLoader {
     private GenericDao dao;
-    private AuditContentConverter contentConverter;
-    private AuditDirectory auditDirectory;
+    private AuditContent contentConverter;
+    private AuditLocation auditLocation;
 
     @Override
     public int importToDatabase() {
-        List<String> content = auditDirectory.importContent();
+        List<String> content = auditLocation.importContent();
         List entries = contentConverter.decodeArrays(content);
         dao.saveOrUpdate(entries);
         return 0;
@@ -31,19 +31,19 @@ public class AuditLoaderImpl implements AuditLoader {
         this.dao = dao;
     }
 
-    public AuditContentConverter getContentConverter() {
+    public AuditContent getContentConverter() {
         return contentConverter;
     }
 
-    public void setContentConverter(AuditContentConverter contentConverter) {
+    public void setContentConverter(AuditContent contentConverter) {
         this.contentConverter = contentConverter;
     }
 
-    public AuditDirectory getAuditDirectory() {
-        return auditDirectory;
+    public AuditLocation getAuditLocation() {
+        return auditLocation;
     }
 
-    public void setAuditDirectory(AuditDirectory auditDirectory) {
-        this.auditDirectory = auditDirectory;
+    public void setAuditLocation(AuditLocation auditLocation) {
+        this.auditLocation = auditLocation;
     }
 }
