@@ -3,9 +3,13 @@ package ru.regionsgroup.inventory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.regionsgroup.inventory.config.ApplicationConfig;
+import ru.regionsgroup.inventory.dao.PrinterConnectionDao;
+import ru.regionsgroup.inventory.model.PrinterConnection;
 import ru.regionsgroup.inventory.service.audit.AuditImport;
 import ru.regionsgroup.inventory.service.audit.load.UserAuditLoader;
 import ru.regionsgroup.inventory.service.utils.HibernateUtil;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -42,8 +46,11 @@ public class Main {
 
         System.out.println("go go go");
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-        AuditImport auditImport = context.getBean(AuditImport.class);
-        auditImport.run();
+        PrinterConnectionDao prnDao = context.getBean(PrinterConnectionDao.class);
+        List<PrinterConnection> result = prnDao.findDefaultsPrinters();
+        System.out.println(result.size());
+//        AuditImport auditImport = context.getBean(AuditImport.class);
+//        auditImport.run();
 //        AuditImport auditImport = context.getBean(AuditImport.class);
 //        auditImport.run();
 //        System.out.println("computers");
