@@ -2,8 +2,8 @@ package ru.regionsgroup.inventory.service.audit.load;
 
 import ru.regionsgroup.inventory.dao.ComputerDao;
 import ru.regionsgroup.inventory.service.audit.AuditLoader;
-import ru.regionsgroup.inventory.service.audit.converter.ComputerAuditContent;
-import ru.regionsgroup.inventory.service.audit.directory.ComputerAuditLocation;
+import ru.regionsgroup.inventory.service.audit.content.ComputerAuditConverter;
+import ru.regionsgroup.inventory.service.audit.location.ComputerAuditLocation;
 
 /**
  * @author Mbedritskiy
@@ -11,11 +11,11 @@ import ru.regionsgroup.inventory.service.audit.directory.ComputerAuditLocation;
 public class ComputerAuditLoader extends AuditLoaderImpl implements AuditLoader {
     public ComputerAuditLoader(
             final ComputerDao dao,
-            final ComputerAuditContent contentConverter,
+            final ComputerAuditConverter contentConverter,
             final ComputerAuditLocation auditDirectory) {
         super();
         setDao(dao);
-        setContentConverter(contentConverter);
-        setAuditLocation(auditDirectory);
+        setConverter(contentConverter);
+        setLocation(auditDirectory);
     }
 }

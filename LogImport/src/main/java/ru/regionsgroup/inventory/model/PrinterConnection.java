@@ -21,6 +21,10 @@ public class PrinterConnection implements Serializable {
     @Column(name = "UPDATED")
     private Date updated;
 
+    @JsonProperty("ComputerID")
+    @Column(name = "COMPUTER_ID")
+    private String computerId;
+
     @JsonProperty("ComputerName")
     @Column(name = "COMPUTER_NAME")
     private String computerName;

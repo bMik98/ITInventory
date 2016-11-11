@@ -5,8 +5,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import ru.regionsgroup.inventory.config.ApplicationConfig;
 import ru.regionsgroup.inventory.dao.PrinterConnectionDao;
 import ru.regionsgroup.inventory.model.PrinterConnection;
-import ru.regionsgroup.inventory.service.audit.AuditImport;
-import ru.regionsgroup.inventory.service.audit.load.UserAuditLoader;
+import ru.regionsgroup.inventory.service.audit.AuditMultiLoader;
 import ru.regionsgroup.inventory.service.utils.HibernateUtil;
 
 import java.util.List;
@@ -30,29 +29,29 @@ public class Main {
 //                Paths.get(printerConnectionsLogRoot), "*.json");
 //
 //        AuditLoader usersLoader = new UserAuditLoader(
-//                new HibernateUserDao(), new UserAuditContent(), userAuditDirectory);
+//                new HibernateUserDao(), new UserAuditConverter(), userAuditDirectory);
 //        AuditLoader computersLoader = new ComputerAuditLoader(
 //                new HibernateComputerDao(),
-//                new ComputerAuditContent(),
+//                new ComputerAuditConverter(),
 //                computerAuditDirectory);
 //        AuditLoader domainsLoader = new DomainAuditLoader(
 //                new HibernateDomainDao(),
-//                new DomainAuditContent(),
+//                new DomainAuditConverter(),
 //                domainAuditDirectory);
 //        AuditLoader printerConnectionsLoader = new PrinterConnectionAuditLoader(
 //                new HibernatePrinterConnectionDao(),
-//                new PrinterConnectionAuditContent(),
+//                new PrinterConnectionAuditConverter(),
 //                printerConnectionAuditDirectory);
 
         System.out.println("go go go");
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+        AuditMultiLoader auditMultiLoader = context.getBean(AuditMultiLoader.class);
+        auditMultiLoader.run();
         PrinterConnectionDao prnDao = context.getBean(PrinterConnectionDao.class);
         List<PrinterConnection> result = prnDao.findDefaultsPrinters();
         System.out.println(result.size());
-//        AuditImport auditImport = context.getBean(AuditImport.class);
-//        auditImport.run();
-//        AuditImport auditImport = context.getBean(AuditImport.class);
-//        auditImport.run();
+//        AuditMultiLoader auditMultiLoader = context.getBean(AuditMultiLoader.class);
+//        auditMultiLoader.run();
 //        System.out.println("computers");
 //        computersLoader.importToDatabase();
 //        System.out.println("domains");

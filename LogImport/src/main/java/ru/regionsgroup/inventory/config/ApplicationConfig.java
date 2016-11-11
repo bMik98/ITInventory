@@ -8,25 +8,20 @@ import ru.regionsgroup.inventory.dao.impl.HibernateComputerDao;
 import ru.regionsgroup.inventory.dao.impl.HibernateDomainDao;
 import ru.regionsgroup.inventory.dao.impl.HibernatePrinterConnectionDao;
 import ru.regionsgroup.inventory.dao.impl.HibernateUserDao;
-import ru.regionsgroup.inventory.service.audit.AuditImport;
-import ru.regionsgroup.inventory.service.audit.converter.*;
-import ru.regionsgroup.inventory.service.audit.converter.ComputerAuditContent;
-import ru.regionsgroup.inventory.service.audit.converter.DomainAuditContent;
-import ru.regionsgroup.inventory.service.audit.directory.*;
-import ru.regionsgroup.inventory.service.audit.directory.DomainAuditLocation;
-import ru.regionsgroup.inventory.service.audit.directory.UserAuditLocation;
-import ru.regionsgroup.inventory.service.audit.load.ComputerAuditLoader;
-import ru.regionsgroup.inventory.service.audit.load.DomainAuditLoader;
-import ru.regionsgroup.inventory.service.audit.load.PrinterConnectionAuditLoader;
-import ru.regionsgroup.inventory.service.audit.load.UserAuditLoader;
+import ru.regionsgroup.inventory.service.audit.AuditLoader;
+import ru.regionsgroup.inventory.service.audit.content.*;
+import ru.regionsgroup.inventory.service.audit.load.*;
+import ru.regionsgroup.inventory.service.audit.location.*;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mbedritskiy
  */
 @Configuration
-@ComponentScan({"ru.regionsgroup.inventory.dao.impl"})
+@ComponentScan({"ru.regionsgroup.inventory.dao.impl", "ru.regionsgroup.inventory.service.audit.*"})
 public class ApplicationConfig {
     private final String PRN_ROOT = "\\\\netapp2.regions.local\\Distibutive\\_Logs\\Log-Printers";
     private final String AD_ROOT = "\\\\netapp2.regions.local\\Distibutive\\_Logs\\Log-AD";
@@ -41,74 +36,81 @@ public class ApplicationConfig {
     private HibernatePrinterConnectionDao printerConnectionDao;
 
     @Bean
-    UserAuditLocation userAuditDirectory() {
+    UserAuditLocation userAuditLocation() {
         return new UserAuditLocation(Paths.get(AD_ROOT), USER_LOG);
     }
 
     @Bean
-    ComputerAuditLocation computerAuditDirectory() {
+    ComputerAuditLocation computerAuditLocation() {
         return new ComputerAuditLocation(Paths.get(AD_ROOT), COMP_LOG);
     }
 
     @Bean
-    DomainAuditLocation domainAuditDirectory() {
+    DomainAuditLocation domainAuditLocation() {
         return new DomainAuditLocation(Paths.get(AD_ROOT), DOMAIN_LOG);
     }
 
     @Bean
-    PrinterConnectionAuditLocation printerConnectionAuditDirectory() {
+    PrinterConnectionAuditLocation printerConnectionAuditLocation() {
         return new PrinterConnectionAuditLocation(Paths.get(PRN_ROOT), LOG_FILTER);
     }
 
     @Bean
-    UserAuditContent userAuditContentConverter() {
-        return new UserAuditContent();
+    UserAuditConverter userAuditConverter() {
+        return new UserAuditConverter();
     }
 
     @Bean
-    ComputerAuditContent computerAuditContentConverter() {
-        return new ComputerAuditContent();
+    ComputerAuditConverter computerAuditConverter() {
+        return new ComputerAuditConverter();
     }
 
     @Bean
-    DomainAuditContent domainAuditContentConverter() {
-        return new DomainAuditContent();
+    DomainAuditConverter domainAuditConverter() {
+        return new DomainAuditConverter();
     }
 
     @Bean
-    PrinterConnectionAuditContent printerConnectionAuditContentConverter() {
-        return new PrinterConnectionAuditContent();
+    PrinterConnectionAuditConverter printerConnectionAuditConverter() {
+        return new PrinterConnectionAuditConverter();
     }
 
     @Bean
     UserAuditLoader userAuditLoader() {
-        return new UserAuditLoader(userDao, userAuditContentConverter(), userAuditDirectory());
+        return new UserAuditLoader(userDao, userAuditConverter(), userAuditLocation());
     }
 
     @Bean
     ComputerAuditLoader computerAuditLoader() {
-        return new ComputerAuditLoader(computerDao, computerAuditContentConverter(), computerAuditDirectory());
+        return new ComputerAuditLoader(computerDao, computerAuditConverter(), computerAuditLocation());
     }
 
     @Bean
     DomainAuditLoader domainAuditLoader() {
-        return new DomainAuditLoader(domainDao, domainAuditContentConverter(), domainAuditDirectory());
+        return new DomainAuditLoader(domainDao, domainAuditConverter(), domainAuditLocation());
     }
 
-    @Bean
-    PrinterConnectionAuditLoader printerConnectionAuditLoader() {
-        return new PrinterConnectionAuditLoader(
-                printerConnectionDao, printerConnectionAuditContentConverter(), printerConnectionAuditDirectory());
-    }
+//    @Bean
+//    PrinterConnectionAuditLoader printerConnectionAuditLoader() {
+//        return new PrinterConnectionAuditLoader(
+//                printerConnectionDao, printerConnectionAuditContent(), printerConnectionAuditLocation());
+//    }
+
+//    @Bean
+//    AuditMultiLoader auditImport() {
+//        AuditMultiLoader batch = new AuditMultiLoader();
+//        batch.addLoader(domainAuditLoader());
+//        batch.addLoader(userAuditLoader());
+//        batch.addLoader(computerAuditLoader());
+//        batch.addLoader(printerConnectionAuditLoader);
+//        return batch;
+//    }
 
     @Bean
-    AuditImport auditImport() {
-        AuditImport batch = new AuditImport();
-        batch.addLoader(domainAuditLoader());
-        batch.addLoader(userAuditLoader());
-        batch.addLoader(computerAuditLoader());
-        batch.addLoader(printerConnectionAuditLoader());
-        return batch;
+    List<AuditLoader> someAuditLoaders() {
+        List<AuditLoader> result = new ArrayList<>();
+        result.add(computerAuditLoader());
+        return result;
     }
 
     @Autowired

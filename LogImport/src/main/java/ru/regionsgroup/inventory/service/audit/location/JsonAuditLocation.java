@@ -1,4 +1,4 @@
-package ru.regionsgroup.inventory.service.audit.directory;
+package ru.regionsgroup.inventory.service.audit.location;
 
 import ru.regionsgroup.inventory.service.audit.AuditLocation;
 

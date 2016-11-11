@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author Mbedritskiy
  */
-public interface AuditContent<T> {
+public interface AuditConverter<T> {
     T decode(final String content);
 
     List<T> decodeArray(final String content);
