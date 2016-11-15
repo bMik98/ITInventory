@@ -45,10 +45,13 @@ public class Main {
 
         System.out.println("go go go");
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-        AuditMultiLoader auditMultiLoader = context.getBean(AuditMultiLoader.class);
-        auditMultiLoader.run();
         PrinterConnectionDao prnDao = context.getBean(PrinterConnectionDao.class);
         List<PrinterConnection> result = prnDao.findDefaultsPrinters();
+        System.out.println(result.size());
+        result.forEach(prnDao::delete);
+        AuditMultiLoader auditMultiLoader = context.getBean(AuditMultiLoader.class);
+        auditMultiLoader.run();
+        result = prnDao.findDefaultsPrinters();
         System.out.println(result.size());
 //        AuditMultiLoader auditMultiLoader = context.getBean(AuditMultiLoader.class);
 //        auditMultiLoader.run();
@@ -59,7 +62,7 @@ public class Main {
 //        System.out.println("printer connections");
 //        printerConnectionsLoader.importToDatabase();
 //
-        HibernateUtil.getSessionFactory().close();
+//        HibernateUtil.getSessionFactory().close();
         System.out.println("Done");
     }
 }

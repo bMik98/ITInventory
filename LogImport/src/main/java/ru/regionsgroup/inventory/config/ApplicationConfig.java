@@ -15,6 +15,7 @@ import ru.regionsgroup.inventory.service.audit.location.*;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -55,45 +56,24 @@ public class ApplicationConfig {
         return new PrinterConnectionAuditLocation(Paths.get(PRN_ROOT), LOG_FILTER);
     }
 
-    @Bean
-    UserAuditConverter userAuditConverter() {
-        return new UserAuditConverter();
-    }
-
-    @Bean
-    ComputerAuditConverter computerAuditConverter() {
-        return new ComputerAuditConverter();
-    }
-
-    @Bean
-    DomainAuditConverter domainAuditConverter() {
-        return new DomainAuditConverter();
-    }
-
-    @Bean
-    PrinterConnectionAuditConverter printerConnectionAuditConverter() {
-        return new PrinterConnectionAuditConverter();
-    }
-
-    @Bean
-    UserAuditLoader userAuditLoader() {
-        return new UserAuditLoader(userDao, userAuditConverter(), userAuditLocation());
-    }
-
-    @Bean
-    ComputerAuditLoader computerAuditLoader() {
-        return new ComputerAuditLoader(computerDao, computerAuditConverter(), computerAuditLocation());
-    }
-
-    @Bean
-    DomainAuditLoader domainAuditLoader() {
-        return new DomainAuditLoader(domainDao, domainAuditConverter(), domainAuditLocation());
-    }
-
 //    @Bean
-//    PrinterConnectionAuditLoader printerConnectionAuditLoader() {
-//        return new PrinterConnectionAuditLoader(
-//                printerConnectionDao, printerConnectionAuditContent(), printerConnectionAuditLocation());
+//    UserAuditConverter userAuditConverter() {
+//        return new UserAuditConverter();
+//    }
+//
+//    @Bean
+//    ComputerAuditConverter computerAuditConverter() {
+//        return new ComputerAuditConverter();
+//    }
+//
+//    @Bean
+//    DomainAuditConverter domainAuditConverter() {
+//        return new DomainAuditConverter();
+//    }
+//
+//    @Bean
+//    PrinterConnectionAuditConverter printerConnectionAuditConverter() {
+//        return new PrinterConnectionAuditConverter();
 //    }
 
 //    @Bean
@@ -105,13 +85,6 @@ public class ApplicationConfig {
 //        batch.addLoader(printerConnectionAuditLoader);
 //        return batch;
 //    }
-
-    @Bean
-    List<AuditLoader> someAuditLoaders() {
-        List<AuditLoader> result = new ArrayList<>();
-        result.add(computerAuditLoader());
-        return result;
-    }
 
     @Autowired
     public void setUserDao(HibernateUserDao userDao) {

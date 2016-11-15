@@ -77,6 +77,14 @@ public class PrinterConnection implements Serializable {
     public PrinterConnection() {
     }
 
+//    @Override
+//    public boolean equals(Object object) {
+//        PrinterConnection that = (PrinterConnection) object;
+//        return (name.equals(that.getName())
+//                && computerId.equals(that.getComputerId())
+//                && portName.equals(that.getPortName()));
+//    }
+
     public long getId() {
         return id;
     }
@@ -91,6 +99,14 @@ public class PrinterConnection implements Serializable {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public String getComputerId() {
+        return computerId;
+    }
+
+    public void setComputerId(String computerId) {
+        this.computerId = computerId;
     }
 
     public String getComputerName() {

@@ -2,17 +2,30 @@ package ru.regionsgroup.inventory.service.audit.load;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.regionsgroup.inventory.dao.PrinterConnectionDao;
 import ru.regionsgroup.inventory.dao.impl.HibernatePrinterConnectionDao;
+import ru.regionsgroup.inventory.model.PrinterConnection;
 import ru.regionsgroup.inventory.service.audit.AuditLoader;
 import ru.regionsgroup.inventory.service.audit.content.PrinterConnectionAuditConverter;
 import ru.regionsgroup.inventory.service.audit.location.PrinterConnectionAuditLocation;
+
+import java.util.List;
 
 /**
  * @author Mbedritskiy
  */
 @Component
 public class PrinterConnectionAuditLoader extends AuditLoaderImpl implements AuditLoader {
-
+//    @Override
+//    public int importToDatabase() {
+//        PrinterConnectionDao dao = (PrinterConnectionDao) getDao();
+//        List<PrinterConnection> currentConnections = dao.getAll();
+//        currentConnections.forEach(dao::delete);
+//        List<String> content = getLocation().importContent();
+//        List entries = getConverter().decodeArrays(content);
+//        dao.saveOrUpdate(entries);
+//        return entries.size();
+//    }
     @Autowired
     public void setDao(HibernatePrinterConnectionDao dao) {
         super.setDao(dao);

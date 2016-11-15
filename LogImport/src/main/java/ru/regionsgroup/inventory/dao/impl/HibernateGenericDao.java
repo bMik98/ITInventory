@@ -47,7 +47,9 @@ public class HibernateGenericDao<T, K extends Serializable> implements GenericDa
 
     @Override
     public void delete(T entity) {
+        getSession().beginTransaction();
         getSession().delete(entity);
+        getSession().getTransaction().commit();
     }
 
     @Override
@@ -57,7 +59,9 @@ public class HibernateGenericDao<T, K extends Serializable> implements GenericDa
 
     @Override
     public List<T> getAll() {
+        getSession().beginTransaction();
         Query query = getSession().createQuery(String.format("from %s", entityType.getName()));
+        getSession().getTransaction().commit();
         return query.list();
     }
 
