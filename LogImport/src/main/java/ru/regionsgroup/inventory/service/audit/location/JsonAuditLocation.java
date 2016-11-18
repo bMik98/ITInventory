@@ -46,6 +46,7 @@ public class JsonAuditLocation implements AuditLocation {
     }
 
     private String readFile(final Path path) {
+        System.out.println(path);
         String result = "";
         try {
             if (Files.size(path) > MIN_FILE_SIZE) {

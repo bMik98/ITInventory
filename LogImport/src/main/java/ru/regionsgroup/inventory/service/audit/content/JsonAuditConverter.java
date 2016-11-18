@@ -16,9 +16,10 @@ import java.util.List;
 public class JsonAuditConverter<T> implements AuditConverter<T> {
     @Override
     public T decode(final String content) {
-        Class<T> entityType = (Class<T>) ((ParameterizedType) this.getClass()
-                .getGenericSuperclass()).getActualTypeArguments()[0];
-        return Json.decodeValue(content, entityType);
+//        Class<T> entityType = (Class<T>) ((ParameterizedType) this.getClass()
+//                .getGenericSuperclass()).getActualTypeArguments()[0];
+//        return Json.decodeValue(content, entityType);
+        return Json.decodeValue(content, getType());
     }
 
     public List<T> decodeArray(final String content) {
@@ -44,5 +45,10 @@ public class JsonAuditConverter<T> implements AuditConverter<T> {
             result.addAll(decodeArray(content));
         }
         return result;
+    }
+
+    Class<T> getType() {
+        return (Class<T>) ((ParameterizedType) this.getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
     }
 }

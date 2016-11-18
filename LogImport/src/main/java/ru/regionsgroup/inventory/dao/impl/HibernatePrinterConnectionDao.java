@@ -20,9 +20,7 @@ public class HibernatePrinterConnectionDao
     @Override
     public List<PrinterConnection> findDefaultsPrinters() {
         List<PrinterConnection> result = new ArrayList<>();
-        getSession().beginTransaction();
         result = getSession().createQuery("from PrinterConnection c where c.asDefault = true", PrinterConnection.class).list();
-        getSession().getTransaction().commit();
         return result;
     }
 }

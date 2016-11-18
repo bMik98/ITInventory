@@ -1,9 +1,12 @@
 package ru.regionsgroup.inventory;
 
+import org.hibernate.Hibernate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.regionsgroup.inventory.config.ApplicationConfig;
+import ru.regionsgroup.inventory.dao.ComputerDao;
 import ru.regionsgroup.inventory.dao.PrinterConnectionDao;
+import ru.regionsgroup.inventory.model.Computer;
 import ru.regionsgroup.inventory.model.PrinterConnection;
 import ru.regionsgroup.inventory.service.audit.AuditMultiLoader;
 import ru.regionsgroup.inventory.service.utils.HibernateUtil;
@@ -48,19 +51,22 @@ public class Main {
         PrinterConnectionDao prnDao = context.getBean(PrinterConnectionDao.class);
         List<PrinterConnection> result = prnDao.findDefaultsPrinters();
         System.out.println(result.size());
-        result.forEach(prnDao::delete);
+//        result.forEach(prnDao::delete);
+
         AuditMultiLoader auditMultiLoader = context.getBean(AuditMultiLoader.class);
         auditMultiLoader.run();
+
         result = prnDao.findDefaultsPrinters();
         System.out.println(result.size());
-//        AuditMultiLoader auditMultiLoader = context.getBean(AuditMultiLoader.class);
-//        auditMultiLoader.run();
-//        System.out.println("computers");
-//        computersLoader.importToDatabase();
-//        System.out.println("domains");
-//        domainsLoader.importToDatabase();
-//        System.out.println("printer connections");
-//        printerConnectionsLoader.importToDatabase();
+
+
+        ComputerDao compDao = context.getBean(ComputerDao.class);
+        Computer computer = compDao.getById("pc-reg-sysad1.regions.local");
+        Hibernate.initialize(computer.getPrinterConnections());
+        System.out.println(computer.getPrinterConnections().size());
+        for (PrinterConnection printerConnection : computer.getPrinterConnections()) {
+            System.out.println(printerConnection.getCaption());
+        }
 //
 //        HibernateUtil.getSessionFactory().close();
         System.out.println("Done");

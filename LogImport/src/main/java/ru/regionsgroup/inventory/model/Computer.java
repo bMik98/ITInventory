@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import ru.regionsgroup.inventory.model.format.BooleanDeserializer;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.*;
 
 @Entity
 @Table(name = "COMPUTERS")
@@ -14,7 +14,7 @@ public class Computer {
     @Id
     @JsonProperty(value = "id")
     @Column(name = "COMPUTER_ID")
-    private String id;
+    private String computerId;
 
     @JsonProperty(value = "cn")
     @Column(name = "COMPUTER_NAME")
@@ -70,15 +70,27 @@ public class Computer {
     @Column(name = "MANAGED_BY")
     private String managedBy;
 
-    public Computer() {
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinTable(name = "INSTALLED_SOFTWARE")
+//    private List<InstalledSoftware> installedSoftware = new ArrayList<>();
+
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "computer", fetch = FetchType.EAGER)
+//    @JoinTable(name = "PRINTER_CONNECTIONS", jo)
+    private Set<PrinterConnection> printerConnections = new HashSet<>();
+
+    public void addPrinterConnection(PrinterConnection printerConnection) {
+        this.printerConnections.add(printerConnection);
+        printerConnection.setComputer(this);
     }
 
-    public String getId() {
-        return id;
+    public String getComputerId() {
+        return computerId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setComputerId(String computerId) {
+        this.computerId = computerId;
     }
 
     public String getComputerName() {
@@ -175,5 +187,13 @@ public class Computer {
 
     public void setManagedBy(String managedBy) {
         this.managedBy = managedBy;
+    }
+
+    public Set<PrinterConnection> getPrinterConnections() {
+        return printerConnections;
+    }
+
+    public void setPrinterConnections(Set<PrinterConnection> printerConnections) {
+        this.printerConnections = printerConnections;
     }
 }

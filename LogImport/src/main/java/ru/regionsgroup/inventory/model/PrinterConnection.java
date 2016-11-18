@@ -19,6 +19,7 @@ public class PrinterConnection implements Serializable {
     @JsonProperty("ReportDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
     @Column(name = "UPDATED")
+    @Temporal(TemporalType.DATE)
     private Date updated;
 
     @JsonProperty("ComputerID")
@@ -74,16 +75,14 @@ public class PrinterConnection implements Serializable {
     @Column(name = "LOCATION")
     private String location;
 
-    public PrinterConnection() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "COMPUTER_ID", insertable = false, updatable = false)
+    private Computer computer;
 
-//    @Override
-//    public boolean equals(Object object) {
-//        PrinterConnection that = (PrinterConnection) object;
-//        return (name.equals(that.getName())
-//                && computerId.equals(that.getComputerId())
-//                && portName.equals(that.getPortName()));
-//    }
+    public void setComputer(Computer computer) {
+        this.computer = computer;
+        this.computer.addPrinterConnection(this);
+    }
 
     public long getId() {
         return id;
@@ -203,5 +202,9 @@ public class PrinterConnection implements Serializable {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Computer getComputer() {
+        return computer;
     }
 }
