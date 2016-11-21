@@ -1,114 +1,167 @@
-'=========================================================================='
-' Title: printerlist.vbs' 
-' Date: 10.11.2016' 
-' Author: Mikhail Bedritskiy (bmik9898@gmail.com)' 
-' Version: 1.10' 
-' Updated: ' 
-' Purpose: List all printers attached to a workstation' 
-'=========================================================================='
+'==============================================================================
+' Title: printerlist.vbs
+' Date: 10.11.2016
+' Author: Mikhail Bedritskiy (bmik9898@gmail.com)
+' Version: 1.20
+' Updated: 21.11.2016
+' Purpose: List all printers attached to a workstation
+'==============================================================================
 Option Explicit
 
-LogPrinters
+ConnectedPrintersInfo
 WScript.Quit
 
-Sub LogPrinters()
+Public Sub ConnectedPrintersInfo()
     Dim objAdSystemInfo: Set objAdSystemInfo = CreateObject("ADSystemInfo")
     Dim wmi: Set wmi = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\root\cimv2")
     Dim printers: Set printers = wmi.ExecQuery("Select * from Win32_Printer")
-    PrintDictionaryReport GetPrinterReport(objAdSystemInfo, printers)
+    Dim dictInfo: Set dictInfo = RetriveConnectedPrintersInfo(objAdSystemInfo, printers)
+    Dim strReport: strReport = ConvertDictionaryArrayToJson(dictInfo.items)
+    PrintLine strReport
 End Sub
 
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' Gather the collection of required object
+'==============================================================================
+' Gathering the information
 '
-Function GetPrinterReport(ByRef objAdSystemInfo, ByRef printers)
+Function RetriveConnectedPrintersInfo(ByRef objAdSystemInfo, ByRef printers)
     Dim report: Set report = CreateObject("Scripting.Dictionary")
     Dim printer, record, i
     i = 1
     For Each printer In printers
-        Set record = NewRecordDictionary(objAdSystemInfo)
-        UpdateRecordData record, printer
+        Set record = CreatePrinterInfo(objAdSystemInfo, printer)
         report.Add i, record
         i = i + 1
         Set record = Nothing
     Next
-    Set GetPrinterReport = report
+    Set RetriveConnectedPrintersInfo = report
     Set report = Nothing
 End Function
 
-Function NewRecordDictionary(ByRef objAdSystemInfo)
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function CreatePrinterInfo(ByRef objAdSystemInfo, ByRef printer)
+    Dim result: Set result = NewConnectedPrinterRecord(objAdSystemInfo)
+    result.Add "name", printer.name
+    result.Add "caption", printer.Caption
+    result.Add "driverName", printer.DriverName
+    result.Add "portName", printer.PortName
+    If (printer.Default) Then
+        result.Add "asDefault", "true"
+    Else
+        result.Add "asDefault", "false"
+    End If
+    result.Add "serverName", Mid(printer.ServerName, 3)
+    Set CreatePrinterInfo = result
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function NewConnectedPrinterRecord(objAdSystemInfo)
     Dim dict: Set dict = CreateObject("Scripting.Dictionary")
     dict.CompareMode = 1
-    Dim strName : strName = Mid(objAdSystemInfo.ComputerName, 4, InStr(objAdSystemInfo.ComputerName, ",") - 4)
-    dict.Add "ReportDate", DateFormat(Date)
-    dict.Add "ComputerID", LCase(strName & "." & objAdSystemInfo.DomainDNSName)
-    dict.Add "ComputerName", strName
-    dict.Add "ComputerDnsDomain", objAdSystemInfo.DomainDNSName
-    dict.Add "ComputerDN", objAdSystemInfo.ComputerName
-    dict.Add "Site", objAdSystemInfo.SiteName
-    Set NewRecordDictionary = dict
+    dict.Add "reportDate", DateFormat(Date)
+    dict.Add "computerId", GetComputerFQDN(objAdSystemInfo)
+    Set NewConnectedPrinterRecord = dict
     Set dict = Nothing
 End Function
 
-Sub UpdateRecordData(ByRef dict, ByRef obj)
-    dict.Add "Name", obj.name
-    dict.Add "Caption", obj.Caption
-    dict.Add "DriverName", obj.DriverName
-    dict.Add "PortName", obj.PortName
-    If (obj.Default) Then
-        dict.Add "Default", "Yes"
-    Else
-        dict.Add "Default", "No"
-    End If
-    dict.Add "ServerName", Mid(obj.ServerName, 3)
-    dict.Add "Comment", obj.Comment
-    dict.Add "Location", obj.Location
-End Sub
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function GetComputerFQDN(objAdSystemInfo)
+    GetComputerFQDN = LCase(ExtractCN(objAdSystemInfo.ComputerName) & "." & _
+        objAdSystemInfo.domainDnsName)
+End Function
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' Report
+Function CurrentUserUPN()
+    CurrentUserUPN = LCase(Env("USERNAME") & "@" & Env("USERDNSDOMAIN"))
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function ExtractCN(strDistinguishedName)
+    Dim stopPosition: stopPosition = InStr(strDistinguishedName, ",") - 4
+    ExtractCN = Mid(strDistinguishedName, 4, stopPosition)
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function Env(var)
+    Dim wshShell: Set wshShell = CreateObject("WScript.Shell")
+    Env = wshShell.ExpandEnvironmentStrings("%" & var & "%")
+    Set wshShell = Nothing
+End Function
+
+'==============================================================================
+' Reporting
 '
-Sub PrintDictionaryReport(ByRef dict)
-    PrintLine "["
-    PrintLine ""
+Function ConvertDictionaryArrayToJson(arrayOfDicts)
+    Dim result: result = "[" & vbCrLf & vbCrLf
     Dim i
-    For i = 1 To dict.Count
-        PrintLine ConvertDictionaryToString(dict.Item(i)) & Iff(i <> dict.Count, vbCrLf & ",", "")
+    For i = 0 To UBound(arrayOfDicts)
+        result = result & ConvertDictionaryToJson(arrayOfDicts(i))
+        result = result & Iff((i = UBound(arrayOfDicts)), "", ",") & vbCrLf
     Next
-    PrintLine ""
-    PrintLine "]"
-End Sub
-
-Function ConvertDictionaryToString(ByRef dict)
-    Dim keys: keys = dict.keys
-    Dim i, result
-    result = "{" & vbCrLf
-    For i = 0 To UBound(keys)
-        result = result & """" & keys(i) & """:"""
-        If Not IsNull(dict(keys(i))) Then
-            result = result & Replace(dict(keys(i)), "\", "\\")
-        End If
-        result = result & """" & Iff(i <> UBound(keys), ",", "") & vbCrLf
-    Next
-    ConvertDictionaryToString = result & "}"
+    result = result & vbCrLf & "]"
+    ConvertDictionaryArrayToJson = result
 End Function
 
-Function Iff(blnFirstSelected, first, second)
-    If blnFirstSelected Then
-        Iff = first
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function ConvertDictionaryToJson(dict)
+'    Dim result: result = "{" + vbCrLf
+    Dim result: result = "{"
+    Dim keys: keys = dict.keys
+    Dim i
+    For i = 0 To UBound(keys)
+        result = result & ConvertPairToJson(keys(i), dict(keys(i)))
+'        result = result & Iff((i = UBound(keys)), "", ",") & vbCrLf
+        result = result & Iff((i = UBound(keys)), "", ", ")
+    Next
+    result = result + "}"
+    ConvertDictionaryToJson = result
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function ConvertPairToJson(ByVal key, ByVal value)
+    Dim refinedValue: refinedValue = ""
+    If Not IsNull(value) Then
+        refinedValue = Replace(value, "\", "\\")
+        refinedValue = Replace(refinedValue, """", "\""")
+    End If
+    ConvertPairToJson = """" & key & """:""" & refinedValue & """"
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function Iff(blnExpression, trueVal, falseVal)
+    If blnExpression Then
+        Iff = trueVal
     Else
-        Iff = second
+        Iff = falseVal
     End If
 End Function
 
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Sub PrintLine(value)
     WScript.StdOut.WriteLine value
+'    Debug.Print value
 End Sub
 
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function ConvertDateFormat(yyyymmdd)
+    ConvertDateFormat = Iff((yyyymmdd = ""), _
+        "", _
+        Right(yyyymmdd, 2) & "." & _
+        Mid(yyyymmdd, 5, 2) & "." & _
+        Left(yyyymmdd, 4))
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Function DateFormat(d)
     DateFormat = Right("0" & Day(d), 2) & "." & _
-    	Right("0" & Month(d),2) & "." & _
-     	Year(d)
+        Right("0" & Month(d), 2) & "." & _
+        Year(d)
 End Function
+
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function TimeFormat(t)
+    TimeFormat = Right("0" & Hour(t), 2) & ":" & _
+        Right("0" & Minute(t), 2) & ":" & _
+        Right("0" & second(t), 2)
+End Function
+'==============================================================================
+
