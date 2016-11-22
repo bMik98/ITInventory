@@ -3,15 +3,15 @@ package ru.regionsgroup.inventory.service.audit.load;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.regionsgroup.inventory.dao.DomainDao;
-import ru.regionsgroup.inventory.service.audit.AuditLoader;
+import ru.regionsgroup.inventory.service.audit.AuditImport;
 import ru.regionsgroup.inventory.service.audit.content.DomainAuditConverter;
-import ru.regionsgroup.inventory.service.audit.location.DomainAuditLocation;
+import ru.regionsgroup.inventory.service.audit.source.DomainAuditSourceImpl;
 
 /**
  * @author Mbedritskiy
  */
 @Component
-public class DomainAuditLoader extends AuditLoaderImpl implements AuditLoader {
+public class DomainAuditImport extends AuditImportImpl implements AuditImport {
 
     @Autowired
     public void setDao(DomainDao dao) {
@@ -24,7 +24,7 @@ public class DomainAuditLoader extends AuditLoaderImpl implements AuditLoader {
     }
 
     @Autowired
-    public void setAuditLocation(DomainAuditLocation location) {
+    public void setAuditLocation(DomainAuditSourceImpl location) {
         super.setLocation(location);
     }
 }

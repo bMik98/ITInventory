@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.regionsgroup.inventory.dao.ComputerDao;
 import ru.regionsgroup.inventory.dao.InstalledSoftwareDao;
-import ru.regionsgroup.inventory.dao.impl.HibernateInstalledSoftwareDao;
 import ru.regionsgroup.inventory.model.InstalledSoftware;
-import ru.regionsgroup.inventory.service.audit.AuditLoader;
+import ru.regionsgroup.inventory.service.audit.AuditImport;
 import ru.regionsgroup.inventory.service.audit.content.InstalledSoftwareAuditConverter;
-import ru.regionsgroup.inventory.service.audit.location.InstalledSoftwareAuditLocation;
+import ru.regionsgroup.inventory.service.audit.source.InstalledSoftwareAuditSourceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.List;
  * @author Mbedritskiy
  */
 @Component
-public class InstalledSoftwareAuditLoader extends AuditLoaderImpl implements AuditLoader {
+public class InstalledSoftwareAuditImport extends AuditImportImpl implements AuditImport {
 
     @Autowired
     private ComputerDao compDao;
@@ -55,7 +54,7 @@ public class InstalledSoftwareAuditLoader extends AuditLoaderImpl implements Aud
     }
 
     @Autowired
-    public void setAuditLocation(InstalledSoftwareAuditLocation location) {
+    public void setAuditLocation(InstalledSoftwareAuditSourceImpl location) {
         super.setLocation(location);
     }
 

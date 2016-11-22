@@ -5,8 +5,6 @@ import java.util.List;
 /**
  * @author Mbedritskiy
  */
-public interface AuditMultiLoader {
-    void setLoaders(List<AuditImport> loaders);
-
-    void run();
+public interface AuditSource {
+    List<String> importContent();
 }

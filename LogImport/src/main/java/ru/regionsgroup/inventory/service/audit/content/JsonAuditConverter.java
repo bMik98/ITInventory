@@ -16,9 +16,6 @@ import java.util.List;
 public class JsonAuditConverter<T> implements AuditConverter<T> {
     @Override
     public T decode(final String content) {
-//        Class<T> entityType = (Class<T>) ((ParameterizedType) this.getClass()
-//                .getGenericSuperclass()).getActualTypeArguments()[0];
-//        return Json.decodeValue(content, entityType);
         return Json.decodeValue(content, getType());
     }
 
@@ -47,7 +44,7 @@ public class JsonAuditConverter<T> implements AuditConverter<T> {
         return result;
     }
 
-    Class<T> getType() {
+    public Class<T> getType() {
         return (Class<T>) ((ParameterizedType) this.getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
     }

@@ -2,6 +2,7 @@ package ru.regionsgroup.inventory.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import ru.regionsgroup.inventory.model.format.BooleanDeserializer;
 
@@ -16,64 +17,40 @@ public class PrinterConnection implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @JsonProperty("ReportDate")
+    @JsonProperty("reportDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
     @Column(name = "UPDATED")
     @Temporal(TemporalType.DATE)
     private Date updated;
 
-    @JsonProperty("ComputerID")
+    @JsonProperty
     @Column(name = "COMPUTER_ID")
     private String computerId;
 
-    @JsonProperty("ComputerName")
-    @Column(name = "COMPUTER_NAME")
-    private String computerName;
-
-    @JsonProperty("ComputerDnsDomain")
-    @Column(name = "COMPUTER_DNS_DOMAIN")
-    private String computerDnsDomain;
-
-    @JsonProperty("ComputerDN")
-    @Column(name = "COMPUTER_DISTINGUISHED_NAME")
-    private String computerDistinguishName;
-
-    @JsonProperty("Site")
-    @Column(name = "SITE")
-    private String site;
-
-    @JsonProperty("Name")
+    @JsonProperty
     @Column(name = "NAME")
     private String name;
 
-    @JsonProperty("Caption")
+    @JsonProperty
     @Column(name = "CAPTION")
     private String caption;
 
-    @JsonProperty("DriverName")
+    @JsonProperty
     @Column(name = "DRIVER_NAME")
     private String driverName;
 
-    @JsonProperty("PortName")
+    @JsonProperty
     @Column(name = "PORT_NAME")
     private String portName;
 
-    @JsonProperty("Default")
-    @JsonDeserialize(using = BooleanDeserializer.class)
+    @JsonProperty
+//    @JsonDeserialize(using = BooleanDeserializer.class)
     @Column(name = "AS_DEFAULT")
     private boolean asDefault;
 
-    @JsonProperty("ServerName")
+    @JsonProperty
     @Column(name = "SERVER_NAME")
     private String serverName;
-
-    @JsonProperty("Comment")
-    @Column(name = "COMMENT")
-    private String comment;
-
-    @JsonProperty("Location")
-    @Column(name = "LOCATION")
-    private String location;
 
     @ManyToOne
     @JoinColumn(name = "COMPUTER_ID", insertable = false, updatable = false)
@@ -82,6 +59,39 @@ public class PrinterConnection implements Serializable {
     public void setComputer(Computer computer) {
         this.computer = computer;
         this.computer.addPrinterConnection(this);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof PrinterConnection)) {
+            return false;
+        }
+        PrinterConnection that = (PrinterConnection) object;
+        return new EqualsBuilder()
+                .append(computerId, that.computerId)
+                .append(name, that.name)
+                .append(caption, that.caption)
+                .append(driverName, that.driverName)
+                .append(portName, that.portName)
+                .append(serverName, that.serverName)
+                .append(asDefault, that.asDefault)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(computerId)
+                .append(name)
+                .append(caption)
+                .append(driverName)
+                .append(portName)
+                .append(serverName)
+                .append(asDefault)
+                .toHashCode();
     }
 
     public long getId() {
@@ -106,38 +116,6 @@ public class PrinterConnection implements Serializable {
 
     public void setComputerId(String computerId) {
         this.computerId = computerId;
-    }
-
-    public String getComputerName() {
-        return computerName;
-    }
-
-    public void setComputerName(String computerName) {
-        this.computerName = computerName;
-    }
-
-    public String getComputerDnsDomain() {
-        return computerDnsDomain;
-    }
-
-    public void setComputerDnsDomain(String computerDnsDomain) {
-        this.computerDnsDomain = computerDnsDomain;
-    }
-
-    public String getComputerDistinguishName() {
-        return computerDistinguishName;
-    }
-
-    public void setComputerDistinguishName(String computerDistinguishName) {
-        this.computerDistinguishName = computerDistinguishName;
-    }
-
-    public String getSite() {
-        return site;
-    }
-
-    public void setSite(String site) {
-        this.site = site;
     }
 
     public String getName() {
@@ -186,22 +164,6 @@ public class PrinterConnection implements Serializable {
 
     public void setServerName(String serverName) {
         this.serverName = serverName;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public Computer getComputer() {
