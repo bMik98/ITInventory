@@ -3,6 +3,7 @@ package ru.regionsgroup.inventory.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.hibernate.Hibernate;
 import ru.regionsgroup.inventory.model.format.BooleanDeserializer;
 
 import javax.persistence.*;
