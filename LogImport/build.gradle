@@ -19,6 +19,7 @@ dependencies {
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.4.Final'
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1211.jre7'
     compile group: 'io.vertx', name: 'vertx-core', version: '3.3.3'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     // optional
     compile 'org.hibernate:hibernate-osgi:5.2.4.Final'
     compile 'org.hibernate:hibernate-envers:5.2.4.Final'
