@@ -2,12 +2,12 @@ package ru.regionsgroup.inventory;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ru.regionsgroup.inventory.config.ApplicationConfig;
+import ru.regionsgroup.inventory.config.AuditSourceConfig;
 import ru.regionsgroup.inventory.dao.ComputerDao;
 import ru.regionsgroup.inventory.dao.PrinterConnectionDao;
 import ru.regionsgroup.inventory.model.Computer;
 import ru.regionsgroup.inventory.model.PrinterConnection;
-import ru.regionsgroup.inventory.service.audit.load.PrinterConnectionAuditImport;
+import ru.regionsgroup.inventory.service.audit.components.PrinterConnectionAuditImport;
 
 import java.util.List;
 
@@ -20,32 +20,32 @@ public class Main {
 //        String printerConnectionsLogRoot = "\\\\netapp2.regions.local\\Distibutive\\_Logs\\Log-Printers";
 //        String activeDirectoryLogRoot = "\\\\netapp2.regions.local\\Distibutive\\_Logs\\Log-AD\\";
 //
-//        UserAuditSourceImpl userAuditDirectory = new UserAuditSourceImpl(
+//        UserAuditFileSource userAuditDirectory = new UserAuditFileSource(
 //                Paths.get(activeDirectoryLogRoot), "ad_users.json");
-//        ComputerAuditSourceImpl computerAuditDirectory = new ComputerAuditSourceImpl(
+//        ComputerAuditFileSource computerAuditDirectory = new ComputerAuditFileSource(
 //                Paths.get(activeDirectoryLogRoot), "ad_computers");
-//        DomainAuditSourceImpl domainAuditDirectory = new DomainAuditSourceImpl(
+//        DomainAuditFileSource domainAuditDirectory = new DomainAuditFileSource(
 //                Paths.get(activeDirectoryLogRoot), "ad_domains.json");
-//        PrinterConnectionAuditSourceImpl printerConnectionAuditDirectory = new PrinterConnectionAuditSourceImpl(
+//        PrinterConnectionAuditFileSource printerConnectionAuditDirectory = new PrinterConnectionAuditFileSource(
 //                Paths.get(printerConnectionsLogRoot), "*.json");
 //
-//        AuditImport usersLoader = new UserAuditImport(
+//        AuditImport usersLoader = new UserAuditSimpleImport(
 //                new HibernateUserDao(), new UserAuditConverter(), userAuditDirectory);
-//        AuditImport computersLoader = new ComputerAuditImport(
+//        AuditImport computersLoader = new ComputerAuditBasicImport(
 //                new HibernateComputerDao(),
 //                new ComputerAuditConverter(),
 //                computerAuditDirectory);
-//        AuditImport domainsLoader = new DomainAuditImport(
+//        AuditImport domainsLoader = new DomainAuditBasicImport(
 //                new HibernateDomainDao(),
 //                new DomainAuditConverter(),
 //                domainAuditDirectory);
-//        AuditImport printerConnectionsLoader = new PrinterConnectionAuditImport(
+//        AuditImport printerConnectionsLoader = new PrinterConnectionAuditSimpleImport(
 //                new HibernatePrinterConnectionDao(),
 //                new PrinterConnectionAuditConverter(),
 //                printerConnectionAuditDirectory);
 
         System.out.println("go go go");
-        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(AuditSourceConfig.class);
         PrinterConnectionDao prnDao = context.getBean(PrinterConnectionDao.class);
         List<PrinterConnection> result = prnDao.findDefaultsPrinters();
         System.out.println("default printers before:" + result.size());
@@ -55,7 +55,7 @@ public class Main {
 //        auditMultiLoader.run();
 
         PrinterConnectionAuditImport loader = context.getBean(PrinterConnectionAuditImport.class);
-        loader.importToDatabase();
+        loader.loadAndSave();
 
         result = prnDao.findDefaultsPrinters();
         System.out.println("default printers after:" + result.size());
