@@ -1,4 +1,4 @@
-package ru.regionsgroup.inventory.service.audit.components;
+package ru.regionsgroup.inventory.service.audit.component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,12 +1,9 @@
-package ru.regionsgroup.inventory.service.audit.components;
+package ru.regionsgroup.inventory.service.audit.component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.regionsgroup.inventory.dao.GenericDao;
 import ru.regionsgroup.inventory.dao.InstalledSoftwareDao;
 import ru.regionsgroup.inventory.model.InstalledSoftware;
-import ru.regionsgroup.inventory.service.audit.AuditImport;
-import ru.regionsgroup.inventory.service.audit.AuditLoader;
 import ru.regionsgroup.inventory.service.audit.load.InstalledSoftwareAuditLoader;
 
 import java.util.ArrayList;

@@ -4,15 +4,17 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface GenericDao<T, K extends Serializable> {
-    K save(T object);
+    K save(T entity);
 
-    void update(T object);
+    void update(T entity);
 
-    void saveOrUpdate(T object);
+    void saveOrUpdate(T entity);
 
-    void saveOrUpdate(List<T> object);
+    void saveOrUpdate(List<T> entities);
 
-    void delete(T object);
+    void delete(T entity);
+
+    void delete(List<T> entities);
 
     T getById(K key);
 

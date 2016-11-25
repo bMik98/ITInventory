@@ -1,4 +1,4 @@
-package ru.regionsgroup.inventory.service.audit.components;
+package ru.regionsgroup.inventory.service.audit.component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.regionsgroup.inventory.dao.ComputerDao;
@@ -17,7 +17,7 @@ public abstract class AuditComputerDependentImport extends AuditSimpleImport imp
     }
 
     @Autowired
-    public void setComputerDao(ComputerDao computerDao) {
+    public void setComputerDao(final ComputerDao computerDao) {
         this.computerDao = computerDao;
     }
 

@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Transactional
-public class HibernateGenericDao<T, K extends Serializable> implements GenericDao<T, K> {
+public abstract class HibernateGenericDao<T, K extends Serializable> implements GenericDao<T, K> {
     @Autowired
     private SessionFactory sessionFactory;
     private Class<T> entityType;
@@ -29,30 +29,36 @@ public class HibernateGenericDao<T, K extends Serializable> implements GenericDa
     }
 
     @Override
-    public K save(T entity) {
+    public K save(final T entity) {
         return (K) getSession().save(entity);
     }
 
     @Override
-    public void update(T entity) {
+    public void update(final T entity) {
         getSession().update(entity);
     }
 
     @Override
-    public void saveOrUpdate(T entity) {
+    public void saveOrUpdate(final T entity) {
         getSession().saveOrUpdate(entity);
     }
 
     @Override
-    public void saveOrUpdate(List<T> entities) {
+    public void saveOrUpdate(final List<T> entities) {
         for (T entity : entities) {
-            System.out.println(entity);
             getSession().saveOrUpdate(entity);
         }
     }
 
     @Override
-    public void delete(T entity) {
+    public void delete(final List<T> entities) {
+        for (T entity : entities) {
+            getSession().saveOrUpdate(entity);
+        }
+    }
+
+    @Override
+    public void delete(final T entity) {
         getSession().delete(entity);
     }
 

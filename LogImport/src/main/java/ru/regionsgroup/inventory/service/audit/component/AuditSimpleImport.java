@@ -1,4 +1,4 @@
-package ru.regionsgroup.inventory.service.audit.components;
+package ru.regionsgroup.inventory.service.audit.component;
 
 import ru.regionsgroup.inventory.service.audit.AuditImport;
 import ru.regionsgroup.inventory.service.audit.AuditLoader;
